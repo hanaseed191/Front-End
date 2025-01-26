@@ -32,7 +32,7 @@ const ProductItem = ({ product, id, updateProduct, deleteProduct }) => {
         <td className="px-4 py-2">${product.price}</td>
         <td className="px-4 py-2">{product.quantity}</td>
         <td className="px-4 py-2">
-          <button onClick={openModal} className="text-teal-500">
+          <button onCklick={openModal} className="text-teal-500">
             <MdEdit />
           </button>
           <button

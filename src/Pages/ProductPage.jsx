@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import NewProduct from "../Components/NewProduct";
 import ProductItem from "../Components/ProductItem";
 import { toast } from "react-toastify";
+import { MdSearch } from "react-icons/md";
 
 const ProductPage = () => {
   const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -75,33 +78,60 @@ const ProductPage = () => {
       toast.error("Failed to delete product!", { autoClose: 2000 });
     }
   };
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   return (
     <>
+      <div className="flex items-center gap-2 mb-4">
+        {/* ช่องค้นหา */}
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          className="w-full p-2 border rounded"
+        />
+        {/* ปุ่มค้นหา */}
+        <button className="bg-blue-500 text-white p-2 rounded flex items-center">
+          <MdSearch className="mr-2" />
+          Search
+        </button>
+      </div>
       <NewProduct addProduct={addProduct} />
-      <table className="min-w-full mt-6 border-collapse">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="px-4 py-2 border">#</th>
-            <th className="px-4 py-2 border">Name</th>
-            <th className="px-4 py-2 border">Description</th>
-            <th className="px-4 py-2 border">Price</th>
-            <th className="px-4 py-2 border">Quantity</th>
-            <th className="px-4 py-2 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product, index) => (
-            <ProductItem
-              key={product.pro_id}
-              id={index}
-              product={product}
-              updateProduct={updateProduct}
-              deleteProduct={deleteProduct}
-            />
-          ))}
-        </tbody>
-      </table>
+      {filteredProducts.length > 0 ? (
+        <table className="min-w-full mt-6 border-collapse">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="px-4 py-2 border">#</th>
+              <th className="px-4 py-2 border">Name</th>
+              <th className="px-4 py-2 border">Description</th>
+              <th className="px-4 py-2 border">Price</th>
+              <th className="px-4 py-2 border">Quantity</th>
+              <th className="px-4 py-2 border">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredProducts.map((product, index) => (
+              <ProductItem
+                key={index}
+                id={index}
+                product={product}
+                updateProduct={updateProduct}
+                deleteProduct={deleteProduct}
+              />
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="mt-6 text-center text-gray-500">
+          No products found matching your search.
+        </p>
+      )}
     </>
   );
 };
